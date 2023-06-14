@@ -1,24 +1,36 @@
 package com.github.maracas.roseau.model;
 
-import spoon.reflect.declaration.CtField;
 
-public record FieldDeclaration(
-	VisibilityKind visibility,
-	String name,
-	boolean isFinal,
-	boolean isStatic
-) {
-	public static FieldDeclaration of(CtField<?> field) {
-		return new FieldDeclaration(
-			VisibilityKind.of(field.getVisibility()),
-			field.getSimpleName(),
-			field.isFinal(),
-			field.isStatic()
-		);
-	}
+public class FieldDeclaration {
+    public String name;
+    public AccessModifier visibility;
+    public String dataType;
 
-	@Override
-	public String toString() {
-		return name;
-	}
+
+
+    public FieldDeclaration(String name, AccessModifier visibility, String dataType) {
+        this.name = name;
+        this.visibility = visibility;
+        this.dataType = dataType;
+
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public AccessModifier getVisibility() {
+        return visibility;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+
+
+
+    public void printField() {
+        System.out.println("Field: " + visibility + " " + dataType + " " + name);
+    }
 }

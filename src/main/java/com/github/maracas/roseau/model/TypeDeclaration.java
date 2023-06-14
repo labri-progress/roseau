@@ -1,37 +1,31 @@
 package com.github.maracas.roseau.model;
 
-import spoon.reflect.declaration.CtType;
+public class TypeDeclaration {
+    public String name;
+    public AccessModifier visibility;
+    public TypeType typeType;
 
-import java.util.List;
+    public TypeDeclaration(String name, AccessModifier visibility, TypeType typeType) {
+        this.name = name;
+        this.visibility = visibility;
+        this.typeType = typeType;
+    }
 
-public record TypeDeclaration(
-	VisibilityKind visibility,
-	String qualifiedName,
-	TypeKind kind,
-	boolean isAbstract,
-	boolean isFinal,
-	boolean isCheckedException,
-	List<ConstructorDeclaration> constructors,
-	List<MethodDeclaration> methods,
-	List<FieldDeclaration> fields
-) {
-	public TypeDeclaration(CtType<?> type, List<ConstructorDeclaration> constructors, List<MethodDeclaration> methods, List<FieldDeclaration> fields) {
-		this(
-			VisibilityKind.of(type.getVisibility()),
-			type.getQualifiedName(),
-			TypeKind.of(type),
-			type.isAbstract(),
-			type.isFinal(),
-			type.isSubtypeOf(type.getFactory().createCtTypeReference(Exception.class)) &&
-				!type.isSubtypeOf(type.getFactory().createCtTypeReference(RuntimeException.class)),
-			constructors,
-			methods,
-		  fields
-		);
-	}
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public String toString() {
-		return qualifiedName;
-	}
+    public AccessModifier getVisibility() {
+        return visibility;
+    }
+
+    public TypeType getDataType() {
+        return typeType;
+    }
+
+    public void printType() {
+        System.out.println("Type: " + visibility + " " + typeType + " " + name);
+    }
 }
+
+

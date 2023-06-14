@@ -1,5 +1,6 @@
 // Top-level classes are either public or package-private
 public class TopLevelClassPublic {
+	public String AString;
 	// Inner classes
 	class InnerClass {}
 	public class InnerClassPublic {}
