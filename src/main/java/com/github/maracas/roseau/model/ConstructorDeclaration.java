@@ -28,7 +28,7 @@ public class ConstructorDeclaration {
         return returnType;
     }
 
-    public List<String> getParameters() { return parametersTypes; }
+    public List<String> getParametersTypes() { return parametersTypes; }
 
     public void printConstructor() {
         System.out.println("Constructor: " + visibility + " " + returnType + " " + name);

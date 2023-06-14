@@ -35,36 +35,52 @@ class APIExtractorTest {
 
 	@Test
 	void write_some_interesting_tests_later() {
+		//Extracting data and processing it
+		List<TypeDeclaration> convertedTypes = extractor.dataProcessing(extractor);
 
-		List<CtPackage> result = extractor.RawSpoonPackages(); //Returning packages
+		//printing the API for each type
+		for (TypeDeclaration typeDeclaration : convertedTypes) {
+			System.out.println("Type: " + typeDeclaration.getName());
+			System.out.println("Visibility: " + typeDeclaration.getVisibility());
+			System.out.println("Data Type: " + typeDeclaration.getTypeType());
 
-		if (!result.isEmpty()) {
+			List<FieldDeclaration> fields = typeDeclaration.getFields();
+			if (fields != null) {
+				System.out.println("Fields:");
+				for (FieldDeclaration field : fields) {
+					System.out.println("    Name: " + field.getName());
+					System.out.println("    Visibility: " + field.getVisibility());
+					System.out.println("    Data type: " + field.getDataType());
 
-			List<CtType<?>>  types = extractor.RawSpoonTypes(result.get(0)); //Only returning the unnamed package's public types
-			List<TypeDeclaration> typesConverted = extractor.RawTypesConversion(types); //Transforming the CtTypes into TypeDeclarations
-
-			if (!types.isEmpty()) {
-				List<CtField<?>> fields = new ArrayList<>();
-				List<CtMethod<?>> methods = new ArrayList<>();
-				List<CtConstructor<?>> constructors = new ArrayList<>();
-
-				types.forEach(type -> fields.addAll(extractor.RawSpoonFields(type)));  //Returning the public fields of public types, still didn't handle the protected case, don't worry I will
-				List<FieldDeclaration> fieldsConverted = extractor.RawFieldsConversion(fields); //Transforming them into fieldDeclarations
-				// Doing the same thing for methods and constructors
-				types.forEach(type -> methods.addAll(extractor.RawSpoonMethods(type)));
-				List<MethodDeclaration> methodsConverted = extractor.RawMethodsConversion(methods);
-				types.forEach(type -> constructors.addAll(extractor.RawSpoonConstructors(type)));
-				List<ConstructorDeclaration> constructorsConverted = extractor.RawConstructorsConversion(constructors);
+				}
 			}
+
+			List<MethodDeclaration> methods = typeDeclaration.getMethods();
+			if (methods != null) {
+				System.out.println("Methods:");
+				for (MethodDeclaration method : methods) {
+					System.out.println("    Name: " + method.getName());
+					System.out.println("    Visibility: " + method.getVisibility());
+					System.out.println("    Return Type: " + method.getReturnType());
+					System.out.println("    Parameters: " + method.getParametersTypes());
+
+				}
+			}
+
+			List<ConstructorDeclaration> constructors = typeDeclaration.getConstructors();
+			if (constructors != null) {
+				System.out.println("Constructors:");
+				for (ConstructorDeclaration constructor : constructors) {
+					System.out.println("    Name: " + constructor.getName());
+					System.out.println("    Visibility: " + constructor.getVisibility());
+					System.out.println("    Return Type: " + constructor.getReturnType());
+					System.out.println("    Parameters: " + constructor.getParametersTypes());
+
+				}
+			}
+
+			System.out.println("\n=====  NEEEEEEEEXT  =====\n");
 		}
-
-
-
-
-
-
-
-
 	}
 
 

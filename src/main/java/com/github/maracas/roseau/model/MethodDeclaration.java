@@ -28,7 +28,9 @@ public class MethodDeclaration {
         return returnType;
     }
 
-    public List<String> getParameters() { return parametersTypes; }
+    public List<String> getParametersTypes() {
+        return parametersTypes;
+    }
     public void printMethod() {
         System.out.println("Method: " + visibility + " " + returnType + " " + name);
     }

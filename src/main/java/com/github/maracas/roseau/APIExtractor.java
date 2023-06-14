@@ -31,7 +31,7 @@ public class APIExtractor {
 		return model.getAllPackages().stream()
 
 				.peek(packageDeclaration -> {
-					System.out.println("Package: " + packageDeclaration.getSimpleName());
+					//System.out.println("Package: " + packageDeclaration.getSimpleName());
 				})
 				.toList();
 	}
@@ -44,7 +44,7 @@ public class APIExtractor {
 				.filter(types -> types.getVisibility()== ModifierKind.PUBLIC) //YES, don't worry I will change this
 
 				.peek(types -> {
-					System.out.println("Type: " + types.getSimpleName());
+					//System.out.println("Type: " + types.getSimpleName());
 				})
 				.toList();
 	}
@@ -56,7 +56,7 @@ public class APIExtractor {
 				.filter(field -> field.getVisibility()== ModifierKind.PUBLIC)  //YES, don't worry I will change this
 
 				.peek(field -> {
-					System.out.println("Field: " + field.getType().getSimpleName());
+					//System.out.println("Field: " + field.getType().getSimpleName());
 				})
 				.toList();
 	}
@@ -66,7 +66,7 @@ public class APIExtractor {
 		return type.getMethods().stream()
 				.filter(method -> method.getVisibility()== ModifierKind.PUBLIC)  //YES, don't worry I will change this
 				.peek(method -> {
-					System.out.println("Method: " + method.getSimpleName());
+					//System.out.println("Method: " + method.getSimpleName());
 				})
 				.toList();
 	}
@@ -77,7 +77,7 @@ public class APIExtractor {
 			return new ArrayList<>(cls.getConstructors().stream()
 					.filter(constructor -> constructor.getVisibility()== ModifierKind.PUBLIC)  //YES, don't worry I will change this
 					.peek(constructor -> {
-						System.out.println("Constructor: " + constructor.getSimpleName());
+						//System.out.println("Constructor: " + constructor.getSimpleName());
 					})
 					.toList());
 		}
@@ -124,9 +124,9 @@ public class APIExtractor {
 					return new TypeDeclaration(name, visibility, typeType);
 				})
 				.peek(typeDeclaration -> {
-					System.out.println("Type name in conversion function: " + typeDeclaration.name);
+					/** System.out.println("Type name in conversion function: " + typeDeclaration.name);
 					System.out.println("Type visibility in conversion function: " + typeDeclaration.visibility);
-					System.out.println("Type type in conversion function: " + typeDeclaration.typeType);
+					System.out.println("Type type in conversion function: " + typeDeclaration.typeType); **/
 				})
 				.toList();
 	}
@@ -141,9 +141,9 @@ public class APIExtractor {
 					return new FieldDeclaration(name, visibility, dataType);
 				})
 				.peek(fieldDeclaration -> {
-					System.out.println("Field name in conversion function: " + fieldDeclaration.name);
+					/** System.out.println("Field name in conversion function: " + fieldDeclaration.name);
 					System.out.println("Field visibility in conversion function: " + fieldDeclaration.visibility);
-					System.out.println("Field datatype in conversion function: " + fieldDeclaration.dataType);
+					System.out.println("Field datatype in conversion function: " + fieldDeclaration.dataType); **/
 				})
 				.toList();
 	}
@@ -161,10 +161,10 @@ public class APIExtractor {
 					return new MethodDeclaration(name, visibility, returnType, parametersTypes);
 				})
 				.peek(methodDeclaration -> {
-					System.out.println("Method name in conversion function: " + methodDeclaration.name);
+					/** System.out.println("Method name in conversion function: " + methodDeclaration.name);
 					System.out.println("Method visibility in conversion function: " + methodDeclaration.visibility);
 					System.out.println("Method datatype in conversion function: " + methodDeclaration.returnType);
-					System.out.println("Method parameters types in conversion function: " + methodDeclaration.parametersTypes);
+					System.out.println("Method parameters types in conversion function: " + methodDeclaration.parametersTypes); **/
 				})
 				.toList();
 	}
@@ -181,13 +181,49 @@ public class APIExtractor {
 					return new ConstructorDeclaration(name, visibility, returnType,parametersTypes);
 				})
 				.peek(constructorDeclaration -> {
-					System.out.println("Constructor name in conversion function: " + constructorDeclaration.name);
+					/**System.out.println("Constructor name in conversion function: " + constructorDeclaration.name);
 					System.out.println("Constructor visibility types in conversion function: " + constructorDeclaration.visibility);
 					System.out.println("Constructor returnType in conversion function: " + constructorDeclaration.returnType);
-					System.out.println("Constructor parameters types in conversion function: " + constructorDeclaration.parametersTypes);
+					System.out.println("Constructor parameters types in conversion function: " + constructorDeclaration.parametersTypes); **/
 				})
 				.toList();
 	}
+
+	public List<TypeDeclaration> dataProcessing(APIExtractor extractor) {
+		List<CtPackage> packages = extractor.RawSpoonPackages(); // Returning packages
+		List<TypeDeclaration> convertedTypes = new ArrayList<>();
+
+		if (!packages.isEmpty()) {
+			List<CtType<?>> types = extractor.RawSpoonTypes(packages.get(0)); // Only returning the unnamed package's public types
+			List<TypeDeclaration> typesConverted = extractor.RawTypesConversion(types); // Transforming the CtTypes into TypeDeclarations
+
+			if (!typesConverted.isEmpty()) {
+				typesConverted.forEach(typeDeclaration -> {
+					List<CtField<?>> fields = new ArrayList<>();
+					List<CtMethod<?>> methods = new ArrayList<>();
+					List<CtConstructor<?>> constructors = new ArrayList<>();
+
+					types.forEach(type -> fields.addAll(extractor.RawSpoonFields(type))); // Returning the public fields of public types, still didn't handle the protected case, don't worry I will
+					List<FieldDeclaration> fieldsConverted = extractor.RawFieldsConversion(fields); // Transforming them into fieldDeclarations
+					typeDeclaration.setFields(fieldsConverted);
+
+					// Doing the same thing for methods and constructors
+					types.forEach(type -> methods.addAll(extractor.RawSpoonMethods(type)));
+					List<MethodDeclaration> methodsConverted = extractor.RawMethodsConversion(methods);
+					typeDeclaration.setMethods(methodsConverted);
+
+					types.forEach(type -> constructors.addAll(extractor.RawSpoonConstructors(type)));
+					List<ConstructorDeclaration> constructorsConverted = extractor.RawConstructorsConversion(constructors);
+					typeDeclaration.setConstructors(constructorsConverted);
+
+					convertedTypes.add(typeDeclaration);
+				});
+			}
+		}
+
+		return convertedTypes;
+	}
+
 
 
 
