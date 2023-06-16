@@ -9,9 +9,6 @@ import org.junit.jupiter.api.Test;
 import spoon.Launcher;
 import spoon.MavenLauncher;
 import spoon.reflect.CtModel;
-import spoon.reflect.declaration.*;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.nio.file.Path;
 
@@ -40,18 +37,20 @@ class APIExtractorTest {
 
 		//printing the API for each type
 		for (TypeDeclaration typeDeclaration : convertedTypes) {
-			System.out.println("Type: " + typeDeclaration.getName());
+			System.out.println("Type name: " + typeDeclaration.getName());
 			System.out.println("Visibility: " + typeDeclaration.getVisibility());
-			System.out.println("Data Type: " + typeDeclaration.getTypeType());
-
+			System.out.println("Type's Type: " + typeDeclaration.getTypeType());
+			System.out.println("Type's Modifiers: " + typeDeclaration.getModifiers());
+			System.out.println("");
 			List<FieldDeclaration> fields = typeDeclaration.getFields();
 			if (fields != null) {
-				System.out.println("Fields:");
+				System.out.println("Fields: ");
 				for (FieldDeclaration field : fields) {
 					System.out.println("    Name: " + field.getName());
 					System.out.println("    Visibility: " + field.getVisibility());
 					System.out.println("    Data type: " + field.getDataType());
-
+					System.out.println("    Modifiers: " + field.getModifiers());
+					System.out.println("");
 				}
 			}
 
@@ -62,8 +61,11 @@ class APIExtractorTest {
 					System.out.println("    Name: " + method.getName());
 					System.out.println("    Visibility: " + method.getVisibility());
 					System.out.println("    Return Type: " + method.getReturnType());
+					System.out.println("    Modifiers: " + method.getModifiers());
 					System.out.println("    Parameters: " + method.getParametersTypes());
+					System.out.println("    Signature: " + method.getSignature().getName() +  "  &  " + method.getSignature().getParameterTypes() );
 
+					System.out.println("");
 				}
 			}
 
@@ -74,12 +76,15 @@ class APIExtractorTest {
 					System.out.println("    Name: " + constructor.getName());
 					System.out.println("    Visibility: " + constructor.getVisibility());
 					System.out.println("    Return Type: " + constructor.getReturnType());
+					System.out.println("    Modifiers: " + constructor.getModifiers());
 					System.out.println("    Parameters: " + constructor.getParametersTypes());
+					System.out.println("    Signature: " + constructor.getSignature().getName() +  "  &  " +constructor.getSignature().getParameterTypes());
+					System.out.println("");
 
 				}
 			}
 
-			System.out.println("\n=====  NEEEEEEEEXT  =====\n");
+			System.out.println("\n  =====  NEEEEEEEEXT  =====\n\n");
 		}
 	}
 

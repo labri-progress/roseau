@@ -1,9 +1,29 @@
 // Top-level classes are either public or package-private
 public class TopLevelClassPublic {
-	public String AString;
+	public static String AString;
 	// Inner classes
 	class InnerClass {}
-	public class InnerClassPublic {}
+	public class InnerClassPublic {
+		public int number;
+		public String text;
+
+		public InnerClassPublic(int number, String text) {
+			this.number = number;
+			this.text = text;
+		}
+
+		public static int getNumber() {
+			return number;
+		}
+
+		public void setNumber(int number) {
+			this.number = number;
+		}
+
+		public String setText(String text) {
+			this.text = text;
+		}
+	}
 	protected class InnerClassProtected {}
 	private class InnerClassPrivate {}
 

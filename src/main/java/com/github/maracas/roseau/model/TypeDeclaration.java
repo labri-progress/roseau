@@ -8,11 +8,13 @@ public class TypeDeclaration {
     public List<FieldDeclaration> fields;
     public List<MethodDeclaration> methods;
     public List<ConstructorDeclaration> constructors;
+    public List<NonAccessModifiers> Modifiers;
 
-    public TypeDeclaration(String name, AccessModifier visibility, TypeType typeType) {
+    public TypeDeclaration(String name, AccessModifier visibility, TypeType typeType, List<NonAccessModifiers> Modifiers) {
         this.name = name;
         this.visibility = visibility;
         this.typeType = typeType;
+        this.Modifiers = Modifiers;
     }
 
     public String getName() {
@@ -27,17 +29,13 @@ public class TypeDeclaration {
         return typeType;
     }
 
-    public List<FieldDeclaration> getFields() {
-        return fields;
-    }
+    public List<FieldDeclaration> getFields() { return fields; }
 
-    public List<MethodDeclaration> getMethods() {
-        return methods;
-    }
+    public List<MethodDeclaration> getMethods() { return methods; }
 
-    public List<ConstructorDeclaration> getConstructors() {
-        return constructors;
-    }
+    public List<ConstructorDeclaration> getConstructors() { return constructors; }
+
+    public List<NonAccessModifiers> getModifiers() { return Modifiers; }
 
     public void setFields(List<FieldDeclaration> fields) {
         this.fields = fields;
