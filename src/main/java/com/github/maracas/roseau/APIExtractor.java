@@ -8,6 +8,8 @@ import com.github.maracas.roseau.model.MethodDeclaration;
 import com.github.maracas.roseau.model.TypeDeclaration;
 import com.github.maracas.roseau.model.TypeType;
 import com.github.maracas.roseau.model.AccessModifier;
+import com.github.maracas.roseau.model.NonAccessModifiers;
+import com.github.maracas.roseau.model.Signature;
 
 import spoon.reflect.CtModel;
 
@@ -17,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+
+
 
 public class APIExtractor {
 	private final CtModel model;
@@ -31,25 +36,39 @@ public class APIExtractor {
 		return model.getAllPackages().stream()
 
 				.peek(packageDeclaration -> {
-					//System.out.println("Package: " + packageDeclaration.getSimpleName());
+					//System.out.println("Package: " + packageDeclaration.getQualifiedName());
 				})
 				.toList();
 	}
 
 
 	//Returning the accessible types of a package as CtTypes
+
 	public List<CtType<?>> RawSpoonTypes(CtPackage pkg) {
+		List<CtType<?>> types = new ArrayList<>();
+		pkg.getTypes().stream()
+				.filter(type -> type.getVisibility() == ModifierKind.PUBLIC)
+				.forEach(type -> {
+					// System.out.println("Type: " + type.getQualifiedName());
+					// System.out.println("Type: " + type.getModifiers());
+					types.add(type);
+					extractingNestedTypes(type, types);
 
-		return pkg.getTypes().stream()
-				.filter(types -> types.getVisibility()== ModifierKind.PUBLIC) //YES, don't worry I will change this
-
-				.peek(types -> {
-					//System.out.println("Type: " + types.getSimpleName());
-				})
-				.toList();
+				});
+		return types;
 	}
 
-
+	// Handing nested types
+	public void extractingNestedTypes(CtType<?> parentType, List<CtType<?>> types) {
+		parentType.getNestedTypes().stream()
+				.filter(type -> type.getVisibility() == ModifierKind.PUBLIC)
+				.forEach(type -> {
+					//System.out.println("Type: " + type.getQualifiedName());
+					//System.out.println("Type: " + type.getModifiers());
+					types.add(type);
+					extractingNestedTypes(type, types);
+				});
+	}
 	//Returning the accessible fields of a type as CtFields
 	public List<CtField<?>> RawSpoonFields(CtType<?> type) {
 		return type.getFields().stream()
@@ -85,8 +104,10 @@ public class APIExtractor {
 
 	}
 
+
+
 	// Converting spoon's ModifierKind to our enum: AccessModifier
-	private AccessModifier convertVisibility(ModifierKind visibility) {
+	public AccessModifier convertVisibility(ModifierKind visibility) {
 		if (visibility == ModifierKind.PUBLIC) {
 			return AccessModifier.PUBLIC;
 		} else if (visibility == ModifierKind.PRIVATE) {
@@ -97,6 +118,47 @@ public class APIExtractor {
 			return AccessModifier.DEFAULT;
 		}
 	}
+
+
+	public NonAccessModifiers ConvertNonAccessModifier(ModifierKind modifier) {
+		if (modifier == ModifierKind.STATIC) {
+			return NonAccessModifiers.STATIC;
+		} else if (modifier == ModifierKind.FINAL) {
+			return NonAccessModifiers.FINAL;
+		} else if (modifier == ModifierKind.ABSTRACT) {
+			return NonAccessModifiers.ABSTRACT;
+		} else if (modifier == ModifierKind.SYNCHRONIZED) {
+			return NonAccessModifiers.SYNCHRONIZED;
+		} else if (modifier == ModifierKind.VOLATILE) {
+			return NonAccessModifiers.VOLATILE;
+		} else if (modifier == ModifierKind.TRANSIENT) {
+			return NonAccessModifiers.TRANSIENT;
+		} else if (modifier == ModifierKind.SEALED) {
+			return NonAccessModifiers.SEALED;
+		} else if (modifier == ModifierKind.NON_SEALED) {
+			return NonAccessModifiers.NON_SEALED;
+		} else if (modifier == ModifierKind.NATIVE) {
+			return NonAccessModifiers.NATIVE;
+		} else {
+			return NonAccessModifiers.STRICTFP;
+		}
+	}
+
+	public List<NonAccessModifiers> filterNonAccessModifiers(Set<ModifierKind> modifiers) {
+		List<NonAccessModifiers> nonAccessModifiers = new ArrayList<>();
+
+		for (ModifierKind modifier : modifiers) {
+			if (modifier != ModifierKind.PUBLIC && modifier != ModifierKind.PRIVATE
+					&& modifier != ModifierKind.PROTECTED ) {
+				nonAccessModifiers.add(ConvertNonAccessModifier(modifier));
+			}
+		}
+
+		return nonAccessModifiers;
+	}
+
+
+
 
 	// Returning the types' types, whether if it's a class or an enum or whatever
 	public TypeType convertTypeType(CtType<?> type) {
@@ -110,7 +172,6 @@ public class APIExtractor {
 			return TypeType.ANNOTATION;
 		else
 			return TypeType.RECORD;
-
 	}
 
 
@@ -118,16 +179,13 @@ public class APIExtractor {
 	public List<TypeDeclaration> RawTypesConversion(List<CtType<?>> spoonTypes) {
 		return spoonTypes.stream()
 				.map(spoonType -> {
-					String name = spoonType.getSimpleName();
+					String name = spoonType.getQualifiedName();
 					AccessModifier visibility = convertVisibility(spoonType.getVisibility());
 					TypeType typeType = convertTypeType(spoonType);
-					return new TypeDeclaration(name, visibility, typeType);
+					List<NonAccessModifiers> modifiers = filterNonAccessModifiers(spoonType.getModifiers());
+					return new TypeDeclaration(name, visibility, typeType, modifiers);
 				})
-				.peek(typeDeclaration -> {
-					/** System.out.println("Type name in conversion function: " + typeDeclaration.name);
-					System.out.println("Type visibility in conversion function: " + typeDeclaration.visibility);
-					System.out.println("Type type in conversion function: " + typeDeclaration.typeType); **/
-				})
+
 				.toList();
 	}
 
@@ -138,13 +196,10 @@ public class APIExtractor {
 					String name = spoonField.getSimpleName();
 					AccessModifier visibility = convertVisibility(spoonField.getVisibility());
 					String dataType = spoonField.getType().getSimpleName();
-					return new FieldDeclaration(name, visibility, dataType);
+					List<NonAccessModifiers> modifiers = filterNonAccessModifiers(spoonField.getModifiers());
+					return new FieldDeclaration(name, visibility, dataType,modifiers);
 				})
-				.peek(fieldDeclaration -> {
-					/** System.out.println("Field name in conversion function: " + fieldDeclaration.name);
-					System.out.println("Field visibility in conversion function: " + fieldDeclaration.visibility);
-					System.out.println("Field datatype in conversion function: " + fieldDeclaration.dataType); **/
-				})
+
 				.toList();
 	}
 
@@ -154,18 +209,14 @@ public class APIExtractor {
 					String name = spoonMethod.getSimpleName();
 					AccessModifier visibility = convertVisibility(spoonMethod.getVisibility());
 					String returnType = spoonMethod.getType().getSimpleName();
+					List<NonAccessModifiers> modifiers = filterNonAccessModifiers(spoonMethod.getModifiers());
 					List<String> parametersTypes = spoonMethod.getParameters().stream()
 							.map(parameterType -> parameterType.getType().getSimpleName())
 							.toList();
+					Signature signature = new Signature(name, parametersTypes);
+					return new MethodDeclaration(name, visibility, returnType, parametersTypes,modifiers, signature);
+				})
 
-					return new MethodDeclaration(name, visibility, returnType, parametersTypes);
-				})
-				.peek(methodDeclaration -> {
-					/** System.out.println("Method name in conversion function: " + methodDeclaration.name);
-					System.out.println("Method visibility in conversion function: " + methodDeclaration.visibility);
-					System.out.println("Method datatype in conversion function: " + methodDeclaration.returnType);
-					System.out.println("Method parameters types in conversion function: " + methodDeclaration.parametersTypes); **/
-				})
 				.toList();
 	}
 
@@ -178,59 +229,48 @@ public class APIExtractor {
 					List<String> parametersTypes = spoonConstructor.getParameters().stream()
 							.map(parameterType -> parameterType.getType().getSimpleName())
 							.toList();
-					return new ConstructorDeclaration(name, visibility, returnType,parametersTypes);
+					List<NonAccessModifiers> modifiers = filterNonAccessModifiers(spoonConstructor.getModifiers());
+					Signature signature = new Signature(name, parametersTypes);
+					return new ConstructorDeclaration(name, visibility, returnType,parametersTypes,modifiers,signature);
 				})
-				.peek(constructorDeclaration -> {
-					/**System.out.println("Constructor name in conversion function: " + constructorDeclaration.name);
-					System.out.println("Constructor visibility types in conversion function: " + constructorDeclaration.visibility);
-					System.out.println("Constructor returnType in conversion function: " + constructorDeclaration.returnType);
-					System.out.println("Constructor parameters types in conversion function: " + constructorDeclaration.parametersTypes); **/
-				})
+
 				.toList();
 	}
 
 	public List<TypeDeclaration> dataProcessing(APIExtractor extractor) {
 		List<CtPackage> packages = extractor.RawSpoonPackages(); // Returning packages
-		List<TypeDeclaration> convertedTypes = new ArrayList<>();
+		List<TypeDeclaration> typesConverted = new ArrayList<>();
 
 		if (!packages.isEmpty()) {
 			List<CtType<?>> types = extractor.RawSpoonTypes(packages.get(0)); // Only returning the unnamed package's public types
-			List<TypeDeclaration> typesConverted = extractor.RawTypesConversion(types); // Transforming the CtTypes into TypeDeclarations
+			typesConverted = extractor.RawTypesConversion(types); // Transforming the CtTypes into TypeDeclarations
 
 			if (!typesConverted.isEmpty()) {
-				typesConverted.forEach(typeDeclaration -> {
-					List<CtField<?>> fields = new ArrayList<>();
-					List<CtMethod<?>> methods = new ArrayList<>();
-					List<CtConstructor<?>> constructors = new ArrayList<>();
+				int i=0;
+				for (CtType<?> type : types) {
+					TypeDeclaration typeDeclaration = typesConverted.get(i);
 
-					types.forEach(type -> fields.addAll(extractor.RawSpoonFields(type))); // Returning the public fields of public types, still didn't handle the protected case, don't worry I will
+					List<CtField<?>> fields = extractor.RawSpoonFields(type); // Returning the public fields of public types, still didn't handle the protected case, don't worry I will
 					List<FieldDeclaration> fieldsConverted = extractor.RawFieldsConversion(fields); // Transforming them into fieldDeclarations
 					typeDeclaration.setFields(fieldsConverted);
 
 					// Doing the same thing for methods and constructors
-					types.forEach(type -> methods.addAll(extractor.RawSpoonMethods(type)));
+
+					List<CtMethod<?>> methods = extractor.RawSpoonMethods(type);
 					List<MethodDeclaration> methodsConverted = extractor.RawMethodsConversion(methods);
 					typeDeclaration.setMethods(methodsConverted);
 
-					types.forEach(type -> constructors.addAll(extractor.RawSpoonConstructors(type)));
+					List<CtConstructor<?>> constructors = extractor.RawSpoonConstructors(type);
 					List<ConstructorDeclaration> constructorsConverted = extractor.RawConstructorsConversion(constructors);
 					typeDeclaration.setConstructors(constructorsConverted);
 
-					convertedTypes.add(typeDeclaration);
-				});
+					i++;
+				};
 			}
+
 		}
+		return typesConverted;
 
-		return convertedTypes;
 	}
-
-
-
-
-
-
-
-
-
 
 }
