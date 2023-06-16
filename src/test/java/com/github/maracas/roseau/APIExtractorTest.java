@@ -44,7 +44,7 @@ class APIExtractorTest {
 			System.out.println("");
 			List<FieldDeclaration> fields = typeDeclaration.getFields();
 			if (fields != null) {
-				System.out.println("Fields:");
+				System.out.println("Fields: ");
 				for (FieldDeclaration field : fields) {
 					System.out.println("    Name: " + field.getName());
 					System.out.println("    Visibility: " + field.getVisibility());
