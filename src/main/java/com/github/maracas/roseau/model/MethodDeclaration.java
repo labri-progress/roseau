@@ -9,17 +9,18 @@ public class MethodDeclaration {
     public List<String> parametersTypes;
     public List<NonAccessModifiers> Modifiers;
     public Signature signature;
-    public List<Exception> exceptionsCaught;
+    public List<String> exceptions;
 
 
 
-    public MethodDeclaration(String name, AccessModifier visibility, String returnType,List<String> parametersTypes,List<NonAccessModifiers> Modifiers, Signature signature) {
+    public MethodDeclaration(String name, AccessModifier visibility, String returnType,List<String> parametersTypes,List<NonAccessModifiers> Modifiers, Signature signature, List<String> exceptions) {
         this.name = name;
         this.visibility = visibility;
         this.returnType = returnType;
         this.parametersTypes = parametersTypes;
         this.Modifiers = Modifiers;
         this.signature = signature;
+        this.exceptions = exceptions;
 
 
     }
@@ -43,6 +44,8 @@ public class MethodDeclaration {
     public List<NonAccessModifiers> getModifiers() { return Modifiers; }
 
     public Signature getSignature() { return signature; }
+
+    public List<String> getExceptions() { return exceptions; }
 
     public void printMethod() {
         System.out.println("Method: " + visibility + " " + returnType + " " + name);
