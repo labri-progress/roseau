@@ -32,10 +32,8 @@ public class APIExtractor {
 	}
 
 	//Returning the packages as CtPackages
-	public List<CtPackage> RawSpoonPackages() {
-
+	public List<CtPackage> rawSpoonPackages() {
 		return model.getAllPackages().stream()
-
 				.peek(packageDeclaration -> {
 					//System.out.println("Package: " + packageDeclaration.getQualifiedName());
 				})
@@ -47,50 +45,48 @@ public class APIExtractor {
 		if (type.getVisibility() == ModifierKind.PUBLIC) {
 			return true;
 		} else if (type.getVisibility() == ModifierKind.PROTECTED) {
-			if (type.isFinal()) {
-				return false;
-			} else if (type instanceof CtSealable && !(((CtSealable) type).getPermittedTypes().isEmpty())) {
-				return true;
-			} else {
-				return true;
-			}
+			return !type.isFinal() && !type.getModifiers().contains(ModifierKind.SEALED);
+		} else {
+			return false;
 		}
-		return false;
 	}
 
+	private boolean memberIsAccessible(CtModifiable member) {
+		return member.isPublic() || member.isProtected();
+	}
 
 	//Returning the accessible types of a package as CtTypes
 
-	public List<CtType<?>> RawSpoonTypes(CtPackage pkg) {
+	public List<CtType<?>> rawSpoonTypes(CtPackage pkg) {
 		List<CtType<?>> types = new ArrayList<>();
 		pkg.getTypes().stream()
-				.filter(type -> typeIsAccessible(type))
+				.filter(this::typeIsAccessible)
 				.forEach(type -> {
 					// System.out.println("Type: " + type.getQualifiedName());
 					// System.out.println("Type: " + type.getModifiers());
 					types.add(type);
-					extractingNestedTypes(type, types);
-
+					extractingNestedTypes(type);
 				});
 		return types;
 	}
 
 	// Handing nested types
-	public void extractingNestedTypes(CtType<?> parentType, List<CtType<?>> types) {
+	public List<CtType<?>> extractingNestedTypes(CtType<?> parentType) {
+		List<CtType<?>> types = new ArrayList<>();
 		parentType.getNestedTypes().stream()
-				.filter(type -> typeIsAccessible(type))
+				.filter(this::typeIsAccessible)
 				.forEach(type -> {
 					//System.out.println("Type: " + type.getQualifiedName());
 					//System.out.println("Type: " + type.getModifiers());
 					types.add(type);
-					extractingNestedTypes(type, types);
+					types.addAll(extractingNestedTypes(type));
 				});
+		return types;
 	}
 	//Returning the accessible fields of a type as CtFields
-	public List<CtField<?>> RawSpoonFields(CtType<?> type) {
+	public List<CtField<?>> rawSpoonFields(CtType<?> type) {
 		return type.getFields().stream()
-				.filter(field -> field.getVisibility()== ModifierKind.PUBLIC || (field.getVisibility()== ModifierKind.PROTECTED && !field.isFinal()))
-
+				.filter(this::memberIsAccessible)
 				.peek(field -> {
 					//System.out.println("Field: " + field.getType().getSimpleName());
 				})
@@ -98,9 +94,9 @@ public class APIExtractor {
 	}
 
     //Returning the accessible methods of a type as CtMethods
-	public List<CtMethod<?>> RawSpoonMethods(CtType<?> type) {
+	public List<CtMethod<?>> rawSpoonMethods(CtType<?> type) {
 		return type.getMethods().stream()
-				.filter(method -> method.getVisibility()== ModifierKind.PUBLIC || (method.getVisibility()== ModifierKind.PROTECTED && !method.isFinal()))
+				.filter(this::memberIsAccessible)
 				.peek(method -> {
 					//System.out.println("Method: " + method.getSimpleName());
 				})
@@ -108,10 +104,10 @@ public class APIExtractor {
 	}
 
 	//Returning the accessible constructors of a type as CtConstructors
-	public List<CtConstructor<?>> RawSpoonConstructors(CtType<?> type) {
+	public List<CtConstructor<?>> rawSpoonConstructors(CtType<?> type) {
 		if (type instanceof CtClass<?> cls) {
 			return new ArrayList<>(cls.getConstructors().stream()
-					.filter(constructor -> constructor.getVisibility()== ModifierKind.PUBLIC || (constructor.getVisibility()== ModifierKind.PROTECTED && !constructor.isFinal()))
+					.filter(this::memberIsAccessible)
 					.peek(constructor -> {
 						//System.out.println("Constructor: " + constructor.getSimpleName());
 					})
@@ -137,7 +133,7 @@ public class APIExtractor {
 	}
 
 	// Converting spoon's Non-access ModifierKind to our enum: NonAccessModifier
-	public NonAccessModifiers ConvertNonAccessModifier(ModifierKind modifier) {
+	public NonAccessModifiers convertNonAccessModifier(ModifierKind modifier) {
 		if (modifier == ModifierKind.STATIC) {
 			return NonAccessModifiers.STATIC;
 		} else if (modifier == ModifierKind.FINAL) {
@@ -168,7 +164,7 @@ public class APIExtractor {
 		for (ModifierKind modifier : modifiers) {
 			if (modifier != ModifierKind.PUBLIC && modifier != ModifierKind.PRIVATE
 					&& modifier != ModifierKind.PROTECTED ) {
-				nonAccessModifiers.add(ConvertNonAccessModifier(modifier));
+				nonAccessModifiers.add(convertNonAccessModifier(modifier));
 			}
 		}
 
@@ -267,12 +263,12 @@ public class APIExtractor {
 	// Processing data and structuring the API using the previous functions
 
 	public API dataProcessing(APIExtractor extractor) {
-		List<CtPackage> packages = extractor.RawSpoonPackages(); // Returning packages
+		List<CtPackage> packages = extractor.rawSpoonPackages(); // Returning packages
 		List<TypeDeclaration> AllTheTypes = new ArrayList<>();
 
 		for (CtPackage pkg : packages) {
 
-			List<CtType<?>> types = extractor.RawSpoonTypes(pkg); // Only returning the packages' accessible types
+			List<CtType<?>> types = extractor.rawSpoonTypes(pkg); // Only returning the packages' accessible types
 			List<TypeDeclaration> typesConverted = extractor.RawTypesConversion(types); // Transforming the CtTypes into TypeDeclarations
 
 			if (!typesConverted.isEmpty()) {
@@ -280,17 +276,17 @@ public class APIExtractor {
 				for (CtType<?> type : types) {
 					TypeDeclaration typeDeclaration = typesConverted.get(i);
 
-					List<CtField<?>> fields = extractor.RawSpoonFields(type); // Returning the accessible fields of accessible types
+					List<CtField<?>> fields = extractor.rawSpoonFields(type); // Returning the accessible fields of accessible types
 					List<FieldDeclaration> fieldsConverted = extractor.RawFieldsConversion(fields); // Transforming them into fieldDeclarations
 					typeDeclaration.setFields(fieldsConverted);
 
 					// Doing the same thing for methods and constructors
 
-					List<CtMethod<?>> methods = extractor.RawSpoonMethods(type);
+					List<CtMethod<?>> methods = extractor.rawSpoonMethods(type);
 					List<MethodDeclaration> methodsConverted = extractor.RawMethodsConversion(methods);
 					typeDeclaration.setMethods(methodsConverted);
 
-					List<CtConstructor<?>> constructors = extractor.RawSpoonConstructors(type);
+					List<CtConstructor<?>> constructors = extractor.rawSpoonConstructors(type);
 					List<ConstructorDeclaration> constructorsConverted = extractor.RawConstructorsConversion(constructors);
 					typeDeclaration.setConstructors(constructorsConverted);
 
