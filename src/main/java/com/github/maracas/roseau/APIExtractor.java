@@ -202,8 +202,10 @@ public class APIExtractor {
 					AccessModifier visibility = convertVisibility(spoonType.getVisibility());
 					TypeType typeType = convertTypeType(spoonType);
 					List<NonAccessModifiers> modifiers = filterNonAccessModifiers(spoonType.getModifiers());
+
 					return new TypeDeclaration(name, visibility, typeType, modifiers);
-				})
+
+					})
 
 				.toList();
 	}

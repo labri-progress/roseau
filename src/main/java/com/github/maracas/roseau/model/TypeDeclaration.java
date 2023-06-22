@@ -10,6 +10,7 @@ public class TypeDeclaration {
     public List<ConstructorDeclaration> constructors;
     public List<NonAccessModifiers> Modifiers;
 
+
     public TypeDeclaration(String name, AccessModifier visibility, TypeType typeType, List<NonAccessModifiers> Modifiers) {
         this.name = name;
         this.visibility = visibility;

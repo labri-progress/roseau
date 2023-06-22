@@ -3,7 +3,7 @@ package com.github.maracas.roseau.model;
 import java.util.List;
 
 public class API {
-    List<TypeDeclaration> AllTheTypes;
+    public List<TypeDeclaration> AllTheTypes;
 
     public API(List<TypeDeclaration> AlTheTypes) {
         this.AllTheTypes = AlTheTypes;

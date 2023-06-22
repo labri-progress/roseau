@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="77d5d88a-f584-4479-bf64-ee1e4a892bcd" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="RunManager" selected="JUnit.APIDiffTest.BreakingChangesTesting">
+    <configuration name="APIDiffTest.BreakingChangesTesting" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="roseau" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.github.maracas.roseau.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.github.maracas.roseau" />
+      <option name="MAIN_CLASS_NAME" value="com.github.maracas.roseau.APIDiffTest" />
+      <option name="METHOD_NAME" value="BreakingChangesTesting" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="APIExtractorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="roseau" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.github.maracas.roseau.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.github.maracas.roseau" />
+      <option name="MAIN_CLASS_NAME" value="com.github.maracas.roseau.APIExtractorTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="APIExtractorTest.write_some_interesting_tests_later" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="roseau" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.github.maracas.roseau.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.github.maracas.roseau" />
+      <option name="MAIN_CLASS_NAME" value="com.github.maracas.roseau.APIExtractorTest" />
+      <option name="METHOD_NAME" value="write_some_interesting_tests_later" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.APIDiffTest.BreakingChangesTesting" />
+        <item itemvalue="JUnit.APIExtractorTest.write_some_interesting_tests_later" />
+        <item itemvalue="JUnit.APIExtractorTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <servers />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/com/github/maracas/roseau/APIDiffTest.java</url>
+          <line>33</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
