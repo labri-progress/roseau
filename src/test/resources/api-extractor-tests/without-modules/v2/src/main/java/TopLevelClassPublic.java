@@ -27,7 +27,15 @@ public class TopLevelClassPublic {
 			this.text = text;
 		}
 	}
-	protected class InnerClassProtected {}
+	protected class InnerClassProtected {
+		public List<String> exceptions;
+
+		public void throwExceptions() throws IOException, InterruptedException {
+
+			throw new IOException("An I/O exception occurred.");
+
+		}
+	}
 	private class InnerClassPrivate {}
 
 	// Nested classes

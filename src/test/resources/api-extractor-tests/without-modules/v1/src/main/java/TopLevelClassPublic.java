@@ -28,7 +28,7 @@ public class TopLevelClassPublic {
 
 		public List<String> exceptions;
 
-		public void throwExceptions() throws IOException, InterruptedException {
+		public void throwExceptions() throws IOException {
 
 			throw new IOException("An I/O exception occurred.");
 

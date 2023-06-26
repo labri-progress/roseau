@@ -34,40 +34,13 @@ class APIDiffTest {
     @Test
     void BreakingChangesTesting() {
 
-        List<List<TypeDeclaration>> futarinodiffu = diff.getUnremovedTypes();
-
-        List<TypeDeclaration> unremovedTypes1 = futarinodiffu.get(0);
-        List<TypeDeclaration> typesInParallelFrom2 = futarinodiffu.get(1);
-
-        int size = unremovedTypes1.size();
-
-        for (int i = 0; i < size; i++) {
+        // Structuring the breaking changes
+        diff.diffTesting();
 
 
-            diff.typeComparison(futarinodiffu.get(0).get(i), futarinodiffu.get(1).get(i));
-
-            List<FieldDeclaration> removedFields = diff.CheckingForRemovedFields(futarinodiffu.get(0).get(i), futarinodiffu.get(1).get(i));
-            List<MethodDeclaration> removedMethods = diff.CheckingForRemovedMethods(futarinodiffu.get(0).get(i), futarinodiffu.get(1).get(i));
-            List<ConstructorDeclaration> removedConstructors = diff.CheckingForRemovedConstructors(futarinodiffu.get(0).get(i), futarinodiffu.get(1).get(i));
-            List<List<MethodDeclaration>> remainingMethods = diff.getUnremovedMethods(futarinodiffu.get(0).get(i), futarinodiffu.get(1).get(i));
-            List<List<FieldDeclaration>> remainingFields = diff.getUnremovedFields(futarinodiffu.get(0).get(i), futarinodiffu.get(1).get(i));
-
-            int size2 = remainingMethods.get(0).size();
-
-            for (int j = 0; j < size2; j++) {
-                diff.methodComparison(remainingMethods.get(0).get(j), remainingMethods.get(1).get(j));
-
-            }
-            List<List<ConstructorDeclaration>> remainingConstructors = diff.getUnremovedConstructors(futarinodiffu.get(0).get(i), futarinodiffu.get(1).get(i));
-            //int size3 = remainingConstructors.get(0).size();
-            //for (int j = 0; j < size3; j++) {
-
-            //}
-        }
-
-
-
-
+        System.out.println("\n THE BREAKING CHANGES LIST :");
+        // Printing the breaking changes
+        diff.diffPrinting();
 
     }
 

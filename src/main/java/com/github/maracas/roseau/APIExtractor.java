@@ -65,24 +65,24 @@ public class APIExtractor {
 					// System.out.println("Type: " + type.getQualifiedName());
 					// System.out.println("Type: " + type.getModifiers());
 					types.add(type);
-					extractingNestedTypes(type);
+					extractingNestedTypes(type, types);
 				});
 		return types;
 	}
 
 	// Handing nested types
-	public List<CtType<?>> extractingNestedTypes(CtType<?> parentType) {
-		List<CtType<?>> types = new ArrayList<>();
+	public void extractingNestedTypes(CtType<?> parentType, List<CtType<?>> types) {
 		parentType.getNestedTypes().stream()
 				.filter(this::typeIsAccessible)
 				.forEach(type -> {
 					//System.out.println("Type: " + type.getQualifiedName());
 					//System.out.println("Type: " + type.getModifiers());
 					types.add(type);
-					types.addAll(extractingNestedTypes(type));
+					extractingNestedTypes(type, types);
 				});
-		return types;
 	}
+
+
 	//Returning the accessible fields of a type as CtFields
 	public List<CtField<?>> rawSpoonFields(CtType<?> type) {
 		return type.getFields().stream()
