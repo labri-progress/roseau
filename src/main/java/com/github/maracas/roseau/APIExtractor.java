@@ -207,20 +207,20 @@ public class APIExtractor {
 	}
 
 
-	public List<FieldDeclaration> RawFieldsConversion(List<CtField<?>> spoonFields) {
+	public List<FieldDeclaration> RawFieldsConversion(List<CtField<?>> spoonFields, TypeDeclaration type) {
 		return spoonFields.stream()
 				.map(spoonField -> {
 					String name = spoonField.getSimpleName();
 					AccessModifier visibility = convertVisibility(spoonField.getVisibility());
 					String dataType = spoonField.getType().getQualifiedName();
 					List<NonAccessModifiers> modifiers = filterNonAccessModifiers(spoonField.getModifiers());
-					return new FieldDeclaration(name, visibility, dataType,modifiers);
+					return new FieldDeclaration(name, type, visibility, dataType,modifiers);
 				})
 
 				.toList();
 	}
 
-	public List<MethodDeclaration> RawMethodsConversion(List<CtMethod<?>> spoonMethods) {
+	public List<MethodDeclaration> RawMethodsConversion(List<CtMethod<?>> spoonMethods, TypeDeclaration type) {
 		return spoonMethods.stream()
 				.map(spoonMethod -> {
 					String name = spoonMethod.getSimpleName();
@@ -234,15 +234,16 @@ public class APIExtractor {
 					List<String> exceptions = spoonMethod.getThrownTypes().stream()
 							.map(exception-> exception.getQualifiedName())
 							.toList();
-					return new MethodDeclaration(name, visibility, returnType, parametersTypes,modifiers, signature, exceptions);
+					return new MethodDeclaration(name, type, visibility, returnType, parametersTypes,modifiers, signature, exceptions);
 				})
 
 				.toList();
 	}
 
-	public List<ConstructorDeclaration> RawConstructorsConversion(List<CtConstructor<?>> spoonConstructors) {
+	public List<ConstructorDeclaration> RawConstructorsConversion(List<CtConstructor<?>> spoonConstructors, TypeDeclaration type) {
 		return spoonConstructors.stream()
 				.map(spoonConstructor -> {
+
 					String name = spoonConstructor.getSimpleName();
 					AccessModifier visibility = convertVisibility(spoonConstructor.getVisibility());
 					String returnType = spoonConstructor.getType().getQualifiedName();
@@ -254,7 +255,7 @@ public class APIExtractor {
 					List<String> exceptions = spoonConstructor.getThrownTypes().stream()
 							.map(exception-> exception.getQualifiedName())
 							.toList();
-					return new ConstructorDeclaration(name, visibility, returnType,parametersTypes,modifiers,signature, exceptions);
+					return new ConstructorDeclaration(name, type, visibility, returnType,parametersTypes,modifiers,signature, exceptions);
 				})
 
 				.toList();
@@ -277,17 +278,17 @@ public class APIExtractor {
 					TypeDeclaration typeDeclaration = typesConverted.get(i);
 
 					List<CtField<?>> fields = extractor.rawSpoonFields(type); // Returning the accessible fields of accessible types
-					List<FieldDeclaration> fieldsConverted = extractor.RawFieldsConversion(fields); // Transforming them into fieldDeclarations
+					List<FieldDeclaration> fieldsConverted = extractor.RawFieldsConversion(fields, typeDeclaration); // Transforming them into fieldDeclarations
 					typeDeclaration.setFields(fieldsConverted);
 
 					// Doing the same thing for methods and constructors
 
 					List<CtMethod<?>> methods = extractor.rawSpoonMethods(type);
-					List<MethodDeclaration> methodsConverted = extractor.RawMethodsConversion(methods);
+					List<MethodDeclaration> methodsConverted = extractor.RawMethodsConversion(methods, typeDeclaration);
 					typeDeclaration.setMethods(methodsConverted);
 
 					List<CtConstructor<?>> constructors = extractor.rawSpoonConstructors(type);
-					List<ConstructorDeclaration> constructorsConverted = extractor.RawConstructorsConversion(constructors);
+					List<ConstructorDeclaration> constructorsConverted = extractor.RawConstructorsConversion(constructors, typeDeclaration);
 					typeDeclaration.setConstructors(constructorsConverted);
 
 					i++;
@@ -320,6 +321,7 @@ public class APIExtractor {
 				System.out.println("Fields: ");
 				for (FieldDeclaration field : fields) {
 					System.out.println("    Name: " + field.getName());
+					System.out.println("    Type: " + field.getType().getName());
 					System.out.println("    Visibility: " + field.getVisibility());
 					System.out.println("    Data type: " + field.getDataType());
 					System.out.println("    Modifiers: " + field.getModifiers());
@@ -332,6 +334,7 @@ public class APIExtractor {
 				System.out.println("Methods:");
 				for (MethodDeclaration method : methods) {
 					System.out.println("    Name: " + method.getName());
+					System.out.println("    Type: " + method.getType().getName());
 					System.out.println("    Visibility: " + method.getVisibility());
 					System.out.println("    Return Type: " + method.getReturnType());
 					System.out.println("    Modifiers: " + method.getModifiers());
@@ -347,6 +350,7 @@ public class APIExtractor {
 				System.out.println("Constructors:");
 				for (ConstructorDeclaration constructor : constructors) {
 					System.out.println("    Name: " + constructor.getName());
+					System.out.println("    Type: " + constructor.getType().getName());
 					System.out.println("    Visibility: " + constructor.getVisibility());
 					System.out.println("    Return Type: " + constructor.getReturnType());
 					System.out.println("    Modifiers: " + constructor.getModifiers());

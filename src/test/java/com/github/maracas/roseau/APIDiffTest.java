@@ -37,10 +37,11 @@ class APIDiffTest {
         // Structuring the breaking changes
         diff.diffTesting();
 
-
-        System.out.println("\n THE BREAKING CHANGES LIST :");
         // Printing the breaking changes
+        System.out.println("\nTHE BREAKING CHANGES LIST :\n");
         diff.diffPrinting();
+
+        diff.trying();
 
     }
 

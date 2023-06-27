@@ -5,14 +5,16 @@ import java.util.List;
 
 public class FieldDeclaration {
     public String name;
+    public TypeDeclaration type;
     public AccessModifier visibility;
     public String dataType;
     public List<NonAccessModifiers> Modifiers;
 
 
 
-    public FieldDeclaration(String name, AccessModifier visibility, String dataType, List<NonAccessModifiers> Modifiers) {
+    public FieldDeclaration(String name, TypeDeclaration type, AccessModifier visibility, String dataType, List<NonAccessModifiers> Modifiers) {
         this.name = name;
+        this.type = type;
         this.visibility = visibility;
         this.dataType = dataType;
         this.Modifiers = Modifiers;
@@ -21,6 +23,8 @@ public class FieldDeclaration {
     public String getName() {
         return name;
     }
+
+    public TypeDeclaration getType() { return type; }
 
     public AccessModifier getVisibility() {
         return visibility;

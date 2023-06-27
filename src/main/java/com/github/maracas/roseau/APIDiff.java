@@ -25,7 +25,7 @@ public class APIDiff {
                 .filter(type -> v2.getAllTheTypes().stream()
                         .noneMatch(t -> t.getName().equals(type.getName())))
                 .peek(removedType -> {
-                    System.out.println("Type removed: " + removedType.getName());
+                    //System.out.println("Type removed: " + removedType.getName());
                     breakingChanges.add(new BreakingChange(BreakingChangeKind.TYPE_REMOVED, new TypeBreakingChange(removedType)));
                 })
                 .toList();
@@ -61,7 +61,7 @@ public class APIDiff {
                 .filter(field1 -> type2.getFields().stream()
                         .noneMatch(field2 -> field2.getName().equals(field1.getName())))
                 .peek(removedField -> {
-                    System.out.println("Field removed: " + removedField.getName());
+                    //System.out.println("Field removed: " + removedField.getName());
                     breakingChanges.add(new BreakingChange(BreakingChangeKind.FIELD_REMOVED, new FieldBreakingChange(removedField)));
                 })
                 .toList();
@@ -73,7 +73,7 @@ public class APIDiff {
                 .filter(method2 -> type2.getMethods().stream()
                         .noneMatch(method1 -> method1.getSignature().getName().equals(method2.getSignature().getName()) && method1.getSignature().getParameterTypes().equals(method2.getSignature().getParameterTypes())))
                 .peek(removedMethod -> {
-                    System.out.println("Method removed: " + removedMethod.getName());
+                    //System.out.println("Method removed: " + removedMethod.getName());
                     breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_REMOVED, new MethodBreakingChange(removedMethod)));
                 })
                         .toList();
@@ -86,7 +86,7 @@ public class APIDiff {
                 .filter(constructor1 -> type2.getConstructors().stream()
                         .noneMatch(constructor2 -> constructor2.getSignature().getName().equals(constructor1.getSignature().getName()) && constructor2.getSignature().getParameterTypes().equals(constructor1.getSignature().getParameterTypes())))
                 .peek(removedConstructor -> {
-                    System.out.println("Constructor removed: " + removedConstructor.getName());
+                    //System.out.println("Constructor removed: " + removedConstructor.getName());
                     breakingChanges.add(new BreakingChange(BreakingChangeKind.CONSTRUCTOR_REMOVED, new ConstructorBreakingChange(removedConstructor)));
                 })
                 .toList();
@@ -162,28 +162,28 @@ public class APIDiff {
     public void fieldComparison(FieldDeclaration field1, FieldDeclaration field2) {
         if (!field1.getModifiers().contains(NonAccessModifiers.FINAL) && field2.getModifiers().contains(NonAccessModifiers.FINAL)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.FIELD_NOW_FINAL, new FieldBreakingChange(field1)));
-            System.out.println("Field v1 " + field1.getName() + " is not final, but Field v2 " + field2.getName() + " is final.");
+            //System.out.println("Field v1 " + field1.getName() + " is not final, but Field v2 " + field2.getName() + " is final.");
         }
 
         if (!field1.getModifiers().contains(NonAccessModifiers.STATIC) && field2.getModifiers().contains(NonAccessModifiers.STATIC)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.FIELD_NOW_STATIC, new FieldBreakingChange(field1)));
-            System.out.println("Field v1 " + field1.getName() + " is not static, but Field v2 " + field2.getName() + " is static.");
+            //System.out.println("Field v1 " + field1.getName() + " is not static, but Field v2 " + field2.getName() + " is static.");
         }
 
         if (field1.getModifiers().contains(NonAccessModifiers.STATIC) && !field2.getModifiers().contains(NonAccessModifiers.STATIC)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.FIELD_NO_LONGER_STATIC, new FieldBreakingChange(field1)));
-            System.out.println("Field v1 " + field1.getName() + " is static, but Field v2 " + field2.getName() + " is not.");
+            //System.out.println("Field v1 " + field1.getName() + " is static, but Field v2 " + field2.getName() + " is not.");
         }
 
         if (!field1.dataType.equals(field2.dataType)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.FIELD_TYPE_CHANGED, new FieldBreakingChange(field1)));
-            System.out.println("Return type of " + field1.getName() + " changed from " + field1.dataType + " to " + field2.dataType);
+            //System.out.println("Return type of " + field1.getName() + " changed from " + field1.dataType + " to " + field2.dataType);
         }
 
 
         if (field1.getVisibility().equals(AccessModifier.PUBLIC) && field2.getVisibility().equals(AccessModifier.PROTECTED)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.FIELD_LESS_ACCESSIBLE, new FieldBreakingChange(field1)));
-            System.out.println("Field v1 " + field1.getName() + " is public, but Field v2 " + field2.getName() + " is protected.");
+            //System.out.println("Field v1 " + field1.getName() + " is public, but Field v2 " + field2.getName() + " is protected.");
         }
 
     }
@@ -193,37 +193,37 @@ public class APIDiff {
     public void methodComparison(MethodDeclaration method1, MethodDeclaration method2) {
         if (!method1.getModifiers().contains(NonAccessModifiers.FINAL) && method2.getModifiers().contains(NonAccessModifiers.FINAL)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_NOW_FINAL, new MethodBreakingChange(method1)));
-            System.out.println("Method v1 " + method1.getName() + " is not final, but Method v2 " + method2.getName() + " is final.");
+            //System.out.println("Method v1 " + method1.getName() + " is not final, but Method v2 " + method2.getName() + " is final.");
         }
 
         if (!method1.getModifiers().contains(NonAccessModifiers.STATIC) && method2.getModifiers().contains(NonAccessModifiers.STATIC)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_NOW_STATIC, new MethodBreakingChange(method1)));
-            System.out.println("Method v1 " + method1.getName() + " is not static, but Method v2 " + method2.getName() + " is static.");
+            //System.out.println("Method v1 " + method1.getName() + " is not static, but Method v2 " + method2.getName() + " is static.");
         }
 
         if (method1.getModifiers().contains(NonAccessModifiers.STATIC) && !method2.getModifiers().contains(NonAccessModifiers.STATIC)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_NO_LONGER_STATIC, new MethodBreakingChange(method1)));
-            System.out.println("Method v1 " + method1.getName() + " is static, but Method v2 " + method2.getName() + " is not.");
+            //System.out.println("Method v1 " + method1.getName() + " is static, but Method v2 " + method2.getName() + " is not.");
         }
 
         if (!method1.getModifiers().contains(NonAccessModifiers.ABSTRACT) && method2.getModifiers().contains(NonAccessModifiers.ABSTRACT)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_NOW_ABSTRACT, new MethodBreakingChange(method1)));
-            System.out.println("Method v1 " + method1.getName() + " is not abstract, but Method v2 " + method2.getName() + " is abstract.");
+            //System.out.println("Method v1 " + method1.getName() + " is not abstract, but Method v2 " + method2.getName() + " is abstract.");
         }
 
         if (method1.getModifiers().contains(NonAccessModifiers.ABSTRACT) && !method2.getModifiers().contains(NonAccessModifiers.ABSTRACT)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_ABSTRACT_NOW_DEFAULT, new MethodBreakingChange(method1)));
-            System.out.println("Method v1 " + method1.getName() + " is abstract, but Method v2 " + method2.getName() + " is not.");
+            //System.out.println("Method v1 " + method1.getName() + " is abstract, but Method v2 " + method2.getName() + " is not.");
         }
 
         if (method1.getVisibility().equals(AccessModifier.PUBLIC) && method2.getVisibility().equals(AccessModifier.PROTECTED)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_LESS_ACCESSIBLE, new MethodBreakingChange(method1)));
-            System.out.println("Method v1 " + method1.getName() + " is public, but Method v2 " + method2.getName() + " is protected.");
+            //System.out.println("Method v1 " + method1.getName() + " is public, but Method v2 " + method2.getName() + " is protected.");
         }
 
         if (!method1.returnType.equals(method2.returnType)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_RETURN_TYPE_CHANGED, new MethodBreakingChange(method1)));
-            System.out.println("Return type of " + method1.getName() + " changed from " + method1.returnType + " to " + method2.returnType);
+            //System.out.println("Return type of " + method1.getName() + " changed from " + method1.returnType + " to " + method2.returnType);
         }
 
         List<String> exceptions1 = method1.getExceptions();
@@ -240,12 +240,12 @@ public class APIDiff {
 
         if (!additionalExceptions1.isEmpty()) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_NO_LONGER_THROWS_CHECKED_EXCEPTION, new MethodBreakingChange(method1)));
-            System.out.println("Method v1 " + method1.getName() + " has more exceptions: " + additionalExceptions1);
+            //System.out.println("Method v1 " + method1.getName() + " has more exceptions: " + additionalExceptions1);
         }
 
         if (!additionalExceptions2.isEmpty()) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_NOW_THROWS_CHECKED_EXCEPTION, new MethodBreakingChange(method1)));
-            System.out.println("Method v2 " + method2.getName() + " has more exceptions: " + additionalExceptions2);
+            //System.out.println("Method v2 " + method2.getName() + " has more exceptions: " + additionalExceptions2);
         }
 
 
@@ -255,7 +255,7 @@ public class APIDiff {
     public void constructorComparison(ConstructorDeclaration constructor1, ConstructorDeclaration constructor2) {
         if (constructor1.getVisibility().equals(AccessModifier.PUBLIC) && constructor2.getVisibility().equals(AccessModifier.PROTECTED)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.CONSTRUCTOR_LESS_ACCESSIBLE, new ConstructorBreakingChange(constructor1)));
-            System.out.println("Constructor v1 " + constructor1.getName() + " is public, but Constructor v2 " + constructor2.getName() + " is protected.");
+            //System.out.println("Constructor v1 " + constructor1.getName() + " is public, but Constructor v2 " + constructor2.getName() + " is protected.");
         }
 
     }
@@ -264,22 +264,22 @@ public class APIDiff {
     public void typeComparison(TypeDeclaration type1, TypeDeclaration type2) {
         if (!type1.getModifiers().contains(NonAccessModifiers.FINAL) && type2.getModifiers().contains(NonAccessModifiers.FINAL)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.TYPE_NOW_FINAL, new TypeBreakingChange(type1)));
-            System.out.println("Type v1 " + type1.getName() + " is not final, but Type v2 " + type2.getName() + " is final.");
+            //System.out.println("Type v1 " + type1.getName() + " is not final, but Type v2 " + type2.getName() + " is final.");
         }
 
         if (!type1.getModifiers().contains(NonAccessModifiers.ABSTRACT) && type2.getModifiers().contains(NonAccessModifiers.ABSTRACT)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.TYPE_NOW_ABSTRACT, new TypeBreakingChange(type1)));
-            System.out.println("Type v1 " + type1.getName() + " is not abstract, but Type v2 " + type2.getName() + " is abstract.");
+            //System.out.println("Type v1 " + type1.getName() + " is not abstract, but Type v2 " + type2.getName() + " is abstract.");
         }
 
         if (type1.getVisibility().equals(AccessModifier.PUBLIC) && type2.getVisibility().equals(AccessModifier.PROTECTED)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.TYPE_LESS_ACCESSIBLE, new TypeBreakingChange(type1)));
-            System.out.println("Type v1 " + type1.getName() + " is public, but Type v2 " + type2.getName() + " is protected.");
+            //System.out.println("Type v1 " + type1.getName() + " is public, but Type v2 " + type2.getName() + " is protected.");
         }
 
         if (!type1.typeType.equals(type2.typeType)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.TYPE_TYPE_CHANGED, new TypeBreakingChange(type1)));
-            System.out.println("Type of " + type1.getName() + " changed from " + type1.typeType + " to " + type2.typeType);
+            //System.out.println("Type of " + type1.getName() + " changed from " + type1.typeType + " to " + type2.typeType);
         }
 
     }
@@ -326,7 +326,8 @@ public class APIDiff {
     public void diffPrinting() {
         for (BreakingChange breakingChange : breakingChanges) {
             System.out.println("Breaking change kind: " + breakingChange.getBreakingChangeKind());
-            System.out.println("In : " + breakingChange.getBreakingChangeElement().getElement());
+            System.out.println("In type : " + breakingChange.getBreakingChangeElement().getElement().get(0));
+            System.out.println("In element : " + breakingChange.getBreakingChangeElement().getElement().get(1));
             System.out.println("---------------------------------");
         }
     }
@@ -340,7 +341,7 @@ public class APIDiff {
 
     public void trying(){
 
-        System.out.println(" I'm tryyyinnnng !!! ");
+        System.out.println(" (˘◡˘) ");
 
 
     }
