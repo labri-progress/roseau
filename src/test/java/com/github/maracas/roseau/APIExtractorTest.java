@@ -33,7 +33,7 @@ class APIExtractorTest {
 
 		//printing the API for each type
 		extractor.printingData(api);
-
+		extractor.trying();
 	}
 
 

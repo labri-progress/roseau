@@ -9,7 +9,8 @@ public class TypeDeclaration {
     public List<MethodDeclaration> methods;
     public List<ConstructorDeclaration> constructors;
     public List<NonAccessModifiers> Modifiers;
-
+    public TypeDeclaration parent;
+    public TypeDeclaration interface_implemented;
 
     public TypeDeclaration(String name, AccessModifier visibility, TypeType typeType, List<NonAccessModifiers> Modifiers) {
         this.name = name;

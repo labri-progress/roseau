@@ -9,15 +9,17 @@ public class FieldDeclaration {
     public AccessModifier visibility;
     public String dataType;
     public List<NonAccessModifiers> Modifiers;
+    public List<String> referencedTypes;
 
 
 
-    public FieldDeclaration(String name, TypeDeclaration type, AccessModifier visibility, String dataType, List<NonAccessModifiers> Modifiers) {
+    public FieldDeclaration(String name, TypeDeclaration type, AccessModifier visibility, String dataType, List<NonAccessModifiers> Modifiers, List<String> referencedTypes) {
         this.name = name;
         this.type = type;
         this.visibility = visibility;
         this.dataType = dataType;
         this.Modifiers = Modifiers;
+        this.referencedTypes = referencedTypes;
     }
 
     public String getName() {
@@ -35,6 +37,8 @@ public class FieldDeclaration {
     }
 
     public List<NonAccessModifiers> getModifiers() { return Modifiers; }
+
+    public List<String> getReferencedTypes() { return referencedTypes; }
 
 
 

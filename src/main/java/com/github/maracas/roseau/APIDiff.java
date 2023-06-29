@@ -175,7 +175,7 @@ public class APIDiff {
             //System.out.println("Field v1 " + field1.getName() + " is static, but Field v2 " + field2.getName() + " is not.");
         }
 
-        if (!field1.dataType.equals(field2.dataType)) {
+        if (!field1.getDataType().equals(field2.getDataType())) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.FIELD_TYPE_CHANGED, new FieldBreakingChange(field1)));
             //System.out.println("Return type of " + field1.getName() + " changed from " + field1.dataType + " to " + field2.dataType);
         }
@@ -184,6 +184,11 @@ public class APIDiff {
         if (field1.getVisibility().equals(AccessModifier.PUBLIC) && field2.getVisibility().equals(AccessModifier.PROTECTED)) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.FIELD_LESS_ACCESSIBLE, new FieldBreakingChange(field1)));
             //System.out.println("Field v1 " + field1.getName() + " is public, but Field v2 " + field2.getName() + " is protected.");
+        }
+
+        if (field1.getDataType().equals(field2.getDataType()) && !field1.getReferencedTypes().equals(field2.getReferencedTypes())) {
+            breakingChanges.add(new BreakingChange(BreakingChangeKind.FIELD_GENERICS_CHANGED, new FieldBreakingChange(field1)));
+            //System.out.println("Field v1 " + field1.getName() + " has the referenced types " + field1.getReferencedTypes() + " , but Field v2 has " + field2.getReferencedTypes() );
         }
 
     }
@@ -221,20 +226,27 @@ public class APIDiff {
             //System.out.println("Method v1 " + method1.getName() + " is public, but Method v2 " + method2.getName() + " is protected.");
         }
 
-        if (!method1.returnType.equals(method2.returnType)) {
+        if (!method1.getReturnType().equals(method2.getReturnType())) {
             breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_RETURN_TYPE_CHANGED, new MethodBreakingChange(method1)));
             //System.out.println("Return type of " + method1.getName() + " changed from " + method1.returnType + " to " + method2.returnType);
         }
 
-        List<String> exceptions1 = method1.getExceptions();
-        List<String> exceptions2 = method2.getExceptions();
+        if (method1.getReturnType().equals(method2.getReturnType()) && !method1.getReturnTypeReferencedTypes().equals(method2.getReturnTypeReferencedTypes())) {
+            breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_RETURN_TYPE_GENERICS_CHANGED, new MethodBreakingChange(method1)));
+            //System.out.println("Method v1 " + method1.getName() + " 's return type has the referenced types " + method1.getReturnTypeReferencedTypes() + " , but Method v2 has " +  method2.getReturnTypeReferencedTypes() );
+        }
 
-        List<String> additionalExceptions1 = exceptions1.stream()
-                .filter(e -> !exceptions2.contains(e))
+        if (!method1.getParametersReferencedTypes().equals(method2.getParametersReferencedTypes())) {
+            breakingChanges.add(new BreakingChange(BreakingChangeKind.METHOD_PARAMETER_GENERICS_CHANGED, new MethodBreakingChange(method1)));
+            //System.out.println("Method v1 " + method1.getName() + " 's parameters have the referenced types " + method1.getParametersReferencedTypes() + " , but Method v2 has " +  method2.getParametersReferencedTypes() );
+        }
+
+        List<String> additionalExceptions1 = method1.getExceptions().stream()
+                .filter(e -> !method2.getExceptions().contains(e))
                 .toList();
 
-        List<String> additionalExceptions2 = exceptions2.stream()
-                .filter(e -> !exceptions1.contains(e))
+        List<String> additionalExceptions2 = method2.getExceptions().stream()
+                .filter(e -> !method1.getExceptions().contains(e))
                 .toList();
 
 
@@ -248,6 +260,13 @@ public class APIDiff {
             //System.out.println("Method v2 " + method2.getName() + " has more exceptions: " + additionalExceptions2);
         }
 
+        IntStream.range(0, method1.getParametersVarargsCheck().size())
+                .filter(i -> method1.getParametersVarargsCheck().get(i) != method2.getParametersVarargsCheck().get(i))
+                .forEach(i -> {
+                    boolean isNowVarargs = !method1.getParametersVarargsCheck().get(i) && method2.getParametersVarargsCheck().get(i);
+                    BreakingChangeKind kind = isNowVarargs ? BreakingChangeKind.METHOD_NOW_VARARGS : BreakingChangeKind.METHOD_NO_LONGER_VARARGS;
+                    breakingChanges.add(new BreakingChange(kind, new MethodBreakingChange(method1)));
+                });
 
 
     }
@@ -331,12 +350,6 @@ public class APIDiff {
             System.out.println("---------------------------------");
         }
     }
-
-
-
-
-
-
 
 
     public void trying(){

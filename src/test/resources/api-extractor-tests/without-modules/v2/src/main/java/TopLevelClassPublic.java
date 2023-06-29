@@ -1,3 +1,5 @@
+import java.util.List;
+
 // Top-level classes are either public or package-private
 public class TopLevelClassPublic {
 	// Inner classes
@@ -5,12 +7,14 @@ public class TopLevelClassPublic {
 	public  class InnerClassPublic {
 
 		public int number;
-		public String text;
+		public List<Integer> text;
 
-		public InnerClassPublic(int number, String text) {
+		public InnerClassPublic(int number, List<Integer> text) {
 			this.number = number;
 			this.text = text;
 		}
+
+		public void varargsMethod(int... number, String[] texts) {}
 
 		public int getNumber() {
 			return number;
@@ -30,6 +34,10 @@ public class TopLevelClassPublic {
 	protected class InnerClassProtected {
 		public List<String> exceptions;
 
+		public List<Integer> processList(List<T> list, List<Integer> strings) {
+
+			return strings;
+		}
 		public void throwExceptions() throws IOException, InterruptedException {
 
 			throw new IOException("An I/O exception occurred.");
