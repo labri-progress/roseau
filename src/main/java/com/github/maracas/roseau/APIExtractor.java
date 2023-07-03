@@ -62,8 +62,12 @@ public class APIExtractor {
 		pkg.getTypes().stream()
 				.filter(this::typeIsAccessible)
 				.forEach(type -> {
-					// System.out.println("Type: " + type.getQualifiedName());
-					// System.out.println("Type: " + type.getModifiers());
+
+					//if (type.getSuperclass() != null) {
+						// System.out.println("Type: " + type.getSuperclass().getQualifiedName());
+						// System.out.println("Type: " + type.getModifiers());
+					//}
+
 					types.add(type);
 					extractingNestedTypes(type, types);
 				});
@@ -75,8 +79,12 @@ public class APIExtractor {
 		parentType.getNestedTypes().stream()
 				.filter(this::typeIsAccessible)
 				.forEach(type -> {
-					//System.out.println("Type: " + type.getQualifiedName());
-					//System.out.println("Type: " + type.getModifiers());
+
+					//if (type.getSuperclass() != null) {
+						// System.out.println("Type: " + type.getSuperclass().getQualifiedName());
+						// System.out.println("Type: " + type.getModifiers());
+					//}
+
 					types.add(type);
 					extractingNestedTypes(type, types);
 				});
@@ -100,7 +108,7 @@ public class APIExtractor {
 		return type.getMethods().stream()
 				.filter(this::memberIsAccessible)
 				.peek(method -> {
-					//System.out.println("Method: " + method.getType());
+					//System.out.println("Method: " + method.isDefaultMethod());
 				})
 				.toList();
 	}
@@ -200,8 +208,11 @@ public class APIExtractor {
 					AccessModifier visibility = convertVisibility(spoonType.getVisibility());
 					TypeType typeType = convertTypeType(spoonType);
 					List<NonAccessModifiers> modifiers = filterNonAccessModifiers(spoonType.getModifiers());
-
-					return new TypeDeclaration(name, visibility, typeType, modifiers);
+					String superclassName = "None";
+					if (spoonType.getSuperclass() != null) {
+						superclassName = spoonType.getSuperclass().getQualifiedName();
+					}
+					return new TypeDeclaration(name, visibility, typeType, modifiers, superclassName);
 
 					})
 
@@ -248,7 +259,8 @@ public class APIExtractor {
 					List<Boolean> parametersVarargsCheck = spoonMethod.getParameters().stream()
 							.map(parameter -> parameter.isVarArgs())
 							.toList();
-					return new MethodDeclaration(name, type, visibility, returnType, returnTypeReferencedType, parametersTypes, parametersReferencedTypes, modifiers, signature, exceptions, parametersVarargsCheck);
+					boolean isDefault = spoonMethod.isDefaultMethod();
+					return new MethodDeclaration(name, type, visibility, returnType, returnTypeReferencedType, parametersTypes, parametersReferencedTypes, modifiers, signature, exceptions, parametersVarargsCheck, isDefault);
 				})
 
 				.toList();
@@ -315,6 +327,19 @@ public class APIExtractor {
 
 		API api = new API(AllTheTypes);
 
+		AllTheTypes.forEach(typeDeclaration -> {
+			String superclassName = typeDeclaration.getSuperclassName();
+			if (superclassName.equals("None")) {
+				typeDeclaration.setSuperclass(null);
+			} else {
+				TypeDeclaration superclass = AllTheTypes.stream()
+						.filter(superClassDec -> superClassDec.getName().equals(superclassName))
+						.findFirst()
+						.orElse(null);
+				typeDeclaration.setSuperclass(superclass);
+			}
+		});
+
 
 		return api;
 
@@ -329,6 +354,11 @@ public class APIExtractor {
 			System.out.println("Visibility: " + typeDeclaration.getVisibility());
 			System.out.println("Type's Type: " + typeDeclaration.getTypeType());
 			System.out.println("Type's Modifiers: " + typeDeclaration.getModifiers());
+			System.out.println("Superclass name: " + typeDeclaration.getSuperclassName());
+			if (typeDeclaration.getSuperclass() != null) {
+				System.out.println("Superclass object name: " + typeDeclaration.getSuperclass().getName());
+			}
+
 			System.out.println("");
 			List<FieldDeclaration> fields = typeDeclaration.getFields();
 			if (fields != null) {
@@ -359,6 +389,7 @@ public class APIExtractor {
 					System.out.println("    Signature: " + method.getSignature().getName() +  "  &  " + method.getSignature().getParameterTypes() );
 					System.out.println("    Exceptions: " + method.getExceptions());
 					System.out.println("    Parameters Varargs check : " + method.getParametersVarargsCheck());
+					System.out.println("    Is default check : " + method.isDefault());
 
 					System.out.println("");
 				}

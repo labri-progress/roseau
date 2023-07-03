@@ -6,6 +6,7 @@ public class TopLevelClassPublic {
 	public static String AString;
 	// Inner classes
 	class InnerClass {}
+
 	public class InnerClassPublic {
 		public int number;
 		public List<String> text;
@@ -15,7 +16,11 @@ public class TopLevelClassPublic {
 			this.text = text;
 		}
 
-		public void varargsMethod(int[] number, String... texts) {}
+		public void m() {
+			System.out.println("InnerClassPublic - method m()");
+		}
+
+		public default void varargsMethod(int[] number, String... texts) {}
 
 		public static int getNumber() {
 			return number;
@@ -27,6 +32,7 @@ public class TopLevelClassPublic {
 
 
 	}
+
 	protected class InnerClassProtected {
 
 		public List<String> exceptions;
@@ -42,12 +48,13 @@ public class TopLevelClassPublic {
 
 		}
 	}
+
 	private class InnerClassPrivate {}
 
 	// Nested classes
 	static class NestedClass {}
-	public static class NestedClassPublic {}
-	protected static class NestedClassProtected {}
+	public class NestedClassPublic extends InnerClassPublic {}
+	public class NestedClassProtected extends InnerClassProtected {}
 	private static class NestedClassPrivate {}
 
 	// Nested interfaces are implicitly static (no inner interfaces)

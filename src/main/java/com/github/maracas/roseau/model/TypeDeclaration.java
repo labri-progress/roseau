@@ -1,6 +1,10 @@
 package com.github.maracas.roseau.model;
-import java.lang.reflect.Method;
 import java.util.List;
+
+
+
+
+
 public class TypeDeclaration {
     public String name;
     public AccessModifier visibility;
@@ -9,14 +13,18 @@ public class TypeDeclaration {
     public List<MethodDeclaration> methods;
     public List<ConstructorDeclaration> constructors;
     public List<NonAccessModifiers> Modifiers;
-    public TypeDeclaration parent;
-    public TypeDeclaration interface_implemented;
+    public String superclassName;
+    public TypeDeclaration superclass;
 
-    public TypeDeclaration(String name, AccessModifier visibility, TypeType typeType, List<NonAccessModifiers> Modifiers) {
+
+
+
+    public TypeDeclaration(String name, AccessModifier visibility, TypeType typeType, List<NonAccessModifiers> Modifiers,String superclassName) {
         this.name = name;
         this.visibility = visibility;
         this.typeType = typeType;
         this.Modifiers = Modifiers;
+        this.superclassName = superclassName;
     }
 
     public String getName() {
@@ -38,6 +46,12 @@ public class TypeDeclaration {
     public List<ConstructorDeclaration> getConstructors() { return constructors; }
 
     public List<NonAccessModifiers> getModifiers() { return Modifiers; }
+
+    public String getSuperclassName() { return superclassName; }
+
+    public TypeDeclaration getSuperclass() { return superclass; }
+
+    public void setSuperclass(TypeDeclaration superclass) { this.superclass = superclass; }
 
     public void setFields(List<FieldDeclaration> fields) {
         this.fields = fields;
