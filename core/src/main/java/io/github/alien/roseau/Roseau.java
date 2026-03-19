@@ -61,9 +61,9 @@ public final class Roseau {
 	 * @param library the library to analyze
 	 * @return the built API model
 	 */
-	public static API buildAPI(Library library) {
+	public static API dontBuildAPI(Library library) {
 		Preconditions.checkNotNull(library);
-		return buildAPI(buildLibraryTypes(library));
+		return dontBuildAPI(buildLibraryTypes(library));
 	}
 
 	/**
@@ -72,9 +72,9 @@ public final class Roseau {
 	 * @param types the extracted library types
 	 * @return the built API model
 	 */
-	public static API buildAPI(LibraryTypes types) {
+	public static API dontBuildAPI(LibraryTypes types) {
 		Preconditions.checkNotNull(types);
-		return buildAPI(types, defaultApiFactory());
+		return dontBuildAPI(types, defaultApiFactory());
 	}
 
 	/**
@@ -84,7 +84,7 @@ public final class Roseau {
 	 * @param resolver the resolver used for type resolution
 	 * @return the built API model
 	 */
-	public static API buildAPI(LibraryTypes types, TypeResolver resolver) {
+	public static API dontBuildAPI(LibraryTypes types, TypeResolver resolver) {
 		Preconditions.checkNotNull(types);
 		Preconditions.checkNotNull(resolver);
 		return new API(types, resolver);
@@ -125,8 +125,8 @@ public final class Roseau {
 		Preconditions.checkNotNull(executor);
 
 		Stopwatch sw = Stopwatch.createStarted();
-		CompletableFuture<API> futureV1 = CompletableFuture.supplyAsync(() -> buildAPI(v1), executor);
-		CompletableFuture<API> futureV2 = CompletableFuture.supplyAsync(() -> buildAPI(v2), executor);
+		CompletableFuture<API> futureV1 = CompletableFuture.supplyAsync(() -> dontBuildAPI(v1), executor);
+		CompletableFuture<API> futureV2 = CompletableFuture.supplyAsync(() -> dontBuildAPI(v2), executor);
 
 		try {
 			API api1 = futureV1.join();
@@ -199,8 +199,8 @@ public final class Roseau {
 		try {
 			LibraryTypes types1 = futureV1.join();
 			LibraryTypes types2 = futureV2.join();
-			API api1 = buildAPI(types1);
-			API api2 = buildAPI(types2);
+			API api1 = dontBuildAPI(types1);
+			API api2 = dontBuildAPI(types2);
 			LOGGER.debug("Building APIs incrementally took {}ms ({} vs {} types)",
 				() -> sw.elapsed().toMillis(), () -> api1.getExportedTypes().size(), () -> api2.getExportedTypes().size());
 			return diff(api1, api2);
@@ -232,11 +232,11 @@ public final class Roseau {
 		return types;
 	}
 
-	private static API buildAPI(LibraryTypes types, ApiFactory factory) {
+	private static API dontBuildAPI(LibraryTypes types, ApiFactory factory) {
 		AsmTypesExtractor extractor = new AsmTypesExtractor(factory);
 		TypeProvider classpathProvider = new ClasspathTypeProvider(extractor, types.getLibrary().getClasspath());
 		TypeResolver cachingTypeResolver = new CachingTypeResolver(List.of(types, classpathProvider));
-		return buildAPI(types, cachingTypeResolver);
+		return dontBuildAPI(types, cachingTypeResolver);
 	}
 
 	private static ApiFactory defaultApiFactory() {

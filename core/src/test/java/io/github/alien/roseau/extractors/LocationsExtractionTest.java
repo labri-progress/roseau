@@ -125,7 +125,7 @@ class LocationsExtractionTest {
 	void accurate_asm_locations() {
 		var jar = Path.of("src/test/resources/api-showcase.jar");
 		var factory = new DefaultApiFactory(new CachingTypeReferenceFactory());
-		var api = Roseau.buildAPI(new AsmTypesExtractor(factory).extractTypes(Library.of(jar)));
+		var api = Roseau.dontBuildAPI(new AsmTypesExtractor(factory).extractTypes(Library.of(jar)));
 
 		api.getLibraryTypes().getAllTypes().forEach(t -> {
 			assertThat(t.getLocation().file()).isEqualTo(Path.of("io", "github", "alien", "roseau", "APIShowcase.java"));
@@ -155,7 +155,7 @@ class LocationsExtractionTest {
 	void no_jar_locations_when_no_debug_information() {
 		var jar = Path.of("src/test/resources/api-showcase-no-debug.jar");
 		var factory = new DefaultApiFactory(new CachingTypeReferenceFactory());
-		var api = Roseau.buildAPI(new AsmTypesExtractor(factory).extractTypes(Library.of(jar)));
+		var api = Roseau.dontBuildAPI(new AsmTypesExtractor(factory).extractTypes(Library.of(jar)));
 
 		var locations = api.getLibraryTypes().getAllTypes().stream()
 			.flatMap(type -> Stream.concat(Stream.of(type.getLocation()), Stream.concat(

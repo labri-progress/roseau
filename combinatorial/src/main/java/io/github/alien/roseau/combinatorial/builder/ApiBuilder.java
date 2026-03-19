@@ -30,7 +30,7 @@ public final class ApiBuilder implements Builder<API> {
 	public API make() {
 		var types = new LibraryTypes(Library.of(Path.of("api")),
 			allTypes.values().stream().map(TypeBuilder::make).collect(Collectors.toSet()));
-		return Roseau.buildAPI(types);
+		return Roseau.dontBuildAPI(types);
 	}
 
 	public static ApiBuilder from(API api) {

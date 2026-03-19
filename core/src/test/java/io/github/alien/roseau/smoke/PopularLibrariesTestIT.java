@@ -157,13 +157,13 @@ class PopularLibrariesTestIT {
 
 		// ASM API
 		sw.reset().start();
-		var asmApi = Roseau.buildAPI(asmLibrary);
+		var asmApi = Roseau.dontBuildAPI(asmLibrary);
 		var asmTypes = asmApi.getLibraryTypes();
 		long asmApiTime = sw.elapsed().toMillis();
 
 		// JDT API
 		sw.reset().start();
-		var jdtApi = Roseau.buildAPI(jdtLibrary);
+		var jdtApi = Roseau.dontBuildAPI(jdtLibrary);
 		long jdtApiTime = sw.elapsed().toMillis();
 		var jdtTypes = jdtApi.getLibraryTypes();
 
@@ -171,7 +171,7 @@ class PopularLibrariesTestIT {
 		if (!jdtTypes.getModule().equals(asmTypes.getModule())) {
 			System.out.printf("Different modules: asm=%s, jdt=%s%n", asmTypes.getModule(), jdtTypes.getModule());
 			jdtApi = jdtApi.getLibraryTypes().getModule().isUnnamed()
-				? Roseau.buildAPI(new LibraryTypes(jdtTypes.getLibrary(), asmTypes.getModule(),
+				? Roseau.dontBuildAPI(new LibraryTypes(jdtTypes.getLibrary(), asmTypes.getModule(),
 				new HashSet<>(jdtTypes.getAllTypes())))
 				: jdtApi;
 		}

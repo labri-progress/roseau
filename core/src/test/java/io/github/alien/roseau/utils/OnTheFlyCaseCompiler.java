@@ -204,8 +204,8 @@ public class OnTheFlyCaseCompiler {
 				}""".formatted(clientSnippet));
 
 			// --- Extract APIs and compute diff ---
-			API v1 = Roseau.buildAPI(Library.of(srcDir1));
-			API v2 = Roseau.buildAPI(Library.of(srcDir2));
+			API v1 = Roseau.dontBuildAPI(Library.of(srcDir1));
+			API v2 = Roseau.dontBuildAPI(Library.of(srcDir2));
 			List<BreakingChange> bcs = Roseau.diff(v1, v2).getAllBreakingChanges();
 
 			// --- Compile client against API v1 (sanity check) ---
