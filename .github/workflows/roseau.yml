@@ -23,7 +23,7 @@ jobs:
           cache: 'maven'
       - name: Build the current JAR
         run: mvn --batch-mode -DskipTests clean package
-      - name: Run roseau in JAR mode
+      - name: Run roseau in JAR mode but do not fail
         uses: alien-tools/roseau-action@main
         with:
           roseau-version: early-access
@@ -31,7 +31,7 @@ jobs:
           v2: core/target/roseau-core-0.6.0-SNAPSHOT.jar
           fail-on-bc: false
           reports: HTML=report.html,CSV=report.csv
-      - name: Run roseau in sources mode
+      - name: Run roseau in sources mode and fail
         uses: alien-tools/roseau-action@main
         with:
           roseau-version: early-access
