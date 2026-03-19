@@ -46,7 +46,7 @@ public final class GenerateClient extends AbstractStep {
 		var apiName = apiPath.toFile().getName();
 		var clientSourcePath = outputPath.resolve(apiName);
 
-		new GenerateApiClient(Roseau.buildAPI(types), clientSourcePath).run();
+		new GenerateApiClient(Roseau.dontBuildAPI(types), clientSourcePath).run();
 
 		try {
 			ExplorerUtils.cleanOrCreateDirectory(tmpOutputPath);

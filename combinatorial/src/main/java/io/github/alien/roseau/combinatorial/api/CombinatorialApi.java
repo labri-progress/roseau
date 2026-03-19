@@ -246,7 +246,7 @@ public final class CombinatorialApi {
 	private API getAPI() {
 		var types = new LibraryTypes(Library.of(Path.of("v1")),
 			typeStore.values().stream().map(TypeBuilder::make).collect(Collectors.toSet()));
-		return Roseau.buildAPI(types);
+		return Roseau.dontBuildAPI(types);
 	}
 
 	private void createInterfaces() {

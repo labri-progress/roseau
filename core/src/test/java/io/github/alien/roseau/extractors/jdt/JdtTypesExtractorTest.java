@@ -85,7 +85,7 @@ class JdtTypesExtractorTest {
 			}""");
 
 		var types = extractor.extractTypes(Library.of(wd));
-		var api = Roseau.buildAPI(types);
+		var api = Roseau.dontBuildAPI(types);
 
 		assertThat(types).isNotNull();
 		assertThat(types.getAllTypes()).hasSize(1);
@@ -135,7 +135,7 @@ class JdtTypesExtractorTest {
 			}""");
 
 		var types = extractor.extractTypes(Library.of(wd));
-		var api = Roseau.buildAPI(types);
+		var api = Roseau.dontBuildAPI(types);
 
 		assertThat(types.getAllTypes()).hasSize(7);
 

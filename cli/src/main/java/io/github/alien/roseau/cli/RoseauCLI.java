@@ -127,8 +127,8 @@ public final class RoseauCLI implements Callable<Integer> {
 		Stopwatch sw = Stopwatch.createStarted();
 
 		console.printVerbose("Building APIs...  ");
-		CompletableFuture<API> futureV1 = CompletableFuture.supplyAsync(() -> Roseau.buildAPI(libraryV1));
-		CompletableFuture<API> futureV2 = CompletableFuture.supplyAsync(() -> Roseau.buildAPI(libraryV2));
+		CompletableFuture<API> futureV1 = CompletableFuture.supplyAsync(() -> Roseau.dontBuildAPI(libraryV1));
+		CompletableFuture<API> futureV2 = CompletableFuture.supplyAsync(() -> Roseau.dontBuildAPI(libraryV2));
 		API apiV1 = futureV1.join();
 		API apiV2 = futureV2.join();
 		console.printlnVerbose("%d types → %d types (%d ms)".formatted(apiV1.getLibraryTypes().getAllTypes().size(),

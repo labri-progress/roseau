@@ -3,7 +3,6 @@ package io.github.alien.roseau.smoke;
 import com.google.common.base.Stopwatch;
 import io.github.alien.roseau.Library;
 import io.github.alien.roseau.Roseau;
-import io.github.alien.roseau.extractors.ExtractorType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,7 +48,7 @@ class JdkTestIT {
 			.build();
 
 		sw.reset().start();
-		var api = Roseau.buildAPI(srcLibrary);
+		var api = Roseau.dontBuildAPI(srcLibrary);
 		var apiTime = sw.elapsed().toMillis();
 		System.out.printf("[%s] API took %dms (%d types, %d exported)%n", jmod.getFileName(), apiTime,
 			api.getLibraryTypes().getAllTypes().size(), api.getExportedTypes().size());
@@ -75,7 +74,7 @@ class JdkTestIT {
 			.build();
 
 		sw.reset().start();
-		var api = Roseau.buildAPI(jarLibrary);
+		var api = Roseau.dontBuildAPI(jarLibrary);
 		var apiTime = sw.elapsed().toMillis();
 		System.out.printf("[%s] API took %dms (%d types, %d exported)%n", jmod.getFileName(), apiTime,
 			api.getLibraryTypes().getAllTypes().size(), api.getExportedTypes().size());

@@ -274,7 +274,7 @@ public class TestUtils {
 				.location(sourcesPath)
 				.exclusions(exclusions)
 				.build();
-			API api = Roseau.buildAPI(library);
+			API api = Roseau.dontBuildAPI(library);
 			MoreFiles.deleteRecursively(sourcesPath, RecursiveDeleteOption.ALLOW_INSECURE);
 			return api;
 		} catch (IOException e) {
@@ -294,7 +294,7 @@ public class TestUtils {
 				.location(sourcesPath)
 				.classpath(classpath)
 				.build();
-			API api = Roseau.buildAPI(library);
+			API api = Roseau.dontBuildAPI(library);
 			MoreFiles.deleteRecursively(sourcesPath, RecursiveDeleteOption.ALLOW_INSECURE);
 			return api;
 		} catch (IOException e) {
@@ -311,7 +311,7 @@ public class TestUtils {
 			Library library = Library.builder()
 				.location(tempJarFile.toPath())
 				.build();
-			return Roseau.buildAPI(library);
+			return Roseau.dontBuildAPI(library);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

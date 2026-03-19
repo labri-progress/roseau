@@ -22,7 +22,7 @@ class RoseauTest {
 		Library library = Library.of(wd);
 
 		var types = Roseau.buildLibraryTypes(library);
-		var api = Roseau.buildAPI(types);
+		var api = Roseau.dontBuildAPI(types);
 
 		assertThat(types.getLibrary()).isEqualTo(library);
 		assertThat(types.getAllTypes())
