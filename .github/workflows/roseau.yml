@@ -41,6 +41,7 @@ jobs:
       - uses: alien-tools/roseau-action@main
         id: roseau
         with:
+          roseau-version: early-access
           v1: com.google.guava:guava:33.5.0-jre
           v2: com.google.guava:guava:33.5.0-jre
           fail-on-bc: true
