@@ -21,9 +21,9 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
           cache: 'maven'
-      - name: Build a JAR
+      - name: Build the current JAR
         run: mvn --batch-mode -DskipTests clean package
-      - name: Run roseau
+      - name: Run roseau in JAR mode
         uses: alien-tools/roseau-action@main
         with:
           roseau-version: early-access
@@ -31,18 +31,11 @@ jobs:
           v2: core/target/roseau-core-0.6.0-SNAPSHOT.jar
           fail-on-bc: false
           reports: HTML=report.html,CSV=report.csv
-
-  not-breaking:
-    name: "No breaking changes expected"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: alien-tools/roseau-action@main
-        id: roseau
+      - name: Run roseau in sources mode
+        uses: alien-tools/roseau-action@main
         with:
           roseau-version: early-access
-          v1: com.google.guava:guava:33.5.0-jre
-          v2: com.google.guava:guava:33.5.0-jre
+          v1: io.github.alien-tools:roseau-core:0.5.0
+          v2: core/src/main/java
           fail-on-bc: true
+          reports: HTML=report.html,CSV=report.csv
