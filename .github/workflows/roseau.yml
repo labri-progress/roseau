@@ -25,7 +25,7 @@ jobs:
       - name: Run roseau
         uses: alien-tools/roseau-action@main
         with:
-          roseau-version: latest
+          roseau-version: early-access
           v1: io.github.alien-tools:roseau-core:0.5.0
           v2: core/target/roseau-core-0.6.0-SNAPSHOT.jar
           fail-on-bc: false
